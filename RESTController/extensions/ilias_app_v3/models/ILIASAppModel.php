@@ -3,6 +3,11 @@
 use ilLPStatus;
 use RESTController\extensions\ILIASApp\V2\data\ErrorAnswer;
 use RESTController\libs as Libs;
+use ilCalendarSchedule;
+use ilDate;
+use ilCalendarCategories;
+use ilCalendarUserSettings;
+use ilCalendarRecurrences;
 
 require_once('./Modules/File/classes/class.ilObjFile.php');
 
@@ -121,6 +126,69 @@ final class ILIASAppModel extends Libs\RESTModel {
             "themeTimestamp" => intval($dat["timestamp"]),
             "themeIconResources" => $resources
         )];
+    }
+
+  /**
+     * Retrieves up to 1000 future calendar entries in JSON format
+     *
+     * @param $user_id 
+     * @return JSON
+     */
+    function getEvents($user_id)
+    {
+        $cats = ilCalendarCategories::_getInstance($user_id);
+        $settings = ilCalendarUserSettings::_getInstance();
+        if ($settings->getCalendarSelectionType() == ilCalendarUserSettings::CAL_SELECTION_MEMBERSHIP)
+            $cats->initialize(ilCalendarCategories::MODE_PERSONAL_DESKTOP_MEMBERSHIP);
+        else
+            $cats->initialize(ilCalendarCategories::MODE_PERSONAL_DESKTOP_ITEMS);
+
+        $schedule = new ilCalendarSchedule(new ilDate(time(), IL_CAL_UNIX), ilCalendarSchedule::TYPE_INBOX);
+        $schedule->setEventsLimit(1000);
+        $schedule->addSubitemCalendars(true);
+        $schedule->calculate();
+        $events = $schedule->getScheduledEvents();
+
+        $result = array();
+        foreach ($events as $event) {
+
+            $entry = $event['event'];
+            $catInfo = $cats->getCategoryInfo($event['category_id']);
+            $freq = ilCalendarRecurrences::_getFirstRecurrence($entry->getEntryId());
+            $rec = ilCalendarRecurrences::_getRecurrences($entry->getEntryId());
+
+
+            $actualCategory = array(
+                        'calendar_id' => $event['category_id'],
+                        'calendar_type' => $event['category_type'],
+                        'calendar_title' => $catInfo['title'],
+                        'calendar_color' => $catInfo['color'],
+                        'events' => array()
+            );
+
+            if (!isset($result[$event['category_id']])){
+                $result[$event['category_id']] = $actualCategory;
+            }
+
+            $actualEvent = array(
+                        'event_id' => $entry->getEntryId(),
+                        'event_title' => $entry->getTitle(),
+                        'event_subtitle' => $entry->getSubtitle(),
+                        'event_location' => $entry->getLocation(),
+                        'event_description' => $entry->getDescription(),
+                        'event_beginDate' => $event['dstart'],
+                        'event_endDate' => $event['dend'],
+                        'event_duration' =>  $event['dend'] - $event['dstart'],
+                        'event_last_update' => $entry->getLastUpdate()->get(IL_CAL_UNIX),
+                        'event_frequence' => $freq->getFrequenceType()
+            );
+
+            $result[$event['category_id']]['events'][] = $actualEvent;
+        }
+
+   
+
+        return array_values($result);
     }
 
     /**

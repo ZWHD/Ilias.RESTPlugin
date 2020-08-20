@@ -49,4 +49,11 @@ $app->group('/v3/ilias-app', function () use ($app) {
         if(isset($response["status"]))
             $app->response()->status($response["status"]);
     });
+
+    $app->get('/ical/events', RESTAuth::checkAccess(RestAuth::TOKEN), function() use($app){
+        $iliasApp = new ILIASAppModel();
+        $accessToken = $app->request->getToken();
+        $authorizedUserId = $accessToken->getUserId();
+        $app->response()->body(json_encode($iliasApp->getEvents($authorizedUserId)));
+    });
 });
