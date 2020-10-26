@@ -293,6 +293,7 @@ class ComposerStaticInit6937ff6f1bfff7b517cdc08273ae6b97
         'RESTController\\extensions\\ILIASApp\\V2\\data\\block\\Text' => __DIR__ . '/../..' . '/RESTController/extensions/ilias_app_v2/models/data/block/Text.php',
         'RESTController\\extensions\\ILIASApp\\V2\\data\\block\\Video' => __DIR__ . '/../..' . '/RESTController/extensions/ilias_app_v2/models/data/block/Video.php',
         'RESTController\\extensions\\ILIASApp\\V3\\ILIASAppModel' => __DIR__ . '/../..' . '/RESTController/extensions/ilias_app_v3/models/ILIASAppModel.php',
+        'RESTController\\extensions\\ILIASApp\\V4\\ILIASAppModel' => __DIR__ . '/../..' . '/RESTController/extensions/ilias_app_v4/models/ILIASAppModel.php',
         'RESTController\\extensions\\admin_v1\\DescribrModel' => __DIR__ . '/../..' . '/RESTController/extensions/admin_v1/models/DescribrModel.php',
         'RESTController\\extensions\\admin_v1\\ReportingModel' => __DIR__ . '/../..' . '/RESTController/extensions/admin_v1/models/ReportingModel.php',
         'RESTController\\extensions\\admin_v1\\RepositoryAdminModel' => __DIR__ . '/../..' . '/RESTController/extensions/admin_v1/models/RepositoryAdminModel.php',

@@ -8,6 +8,7 @@ use ilDate;
 use ilCalendarCategories;
 use ilCalendarUserSettings;
 use ilCalendarRecurrences;
+use ilLoggerFactory;
 
 require_once('./Modules/File/classes/class.ilObjFile.php');
 
@@ -148,11 +149,11 @@ final class ILIASAppModel extends Libs\RESTModel {
         $schedule->addSubitemCalendars(true);
         $schedule->calculate();
         $events = $schedule->getScheduledEvents();
-
+        
         $result = array();
         foreach ($events as $event) {
-
             $entry = $event['event'];
+
             $catInfo = $cats->getCategoryInfo($event['category_id']);
             $freq = ilCalendarRecurrences::_getFirstRecurrence($entry->getEntryId());
             $rec = ilCalendarRecurrences::_getRecurrences($entry->getEntryId());
