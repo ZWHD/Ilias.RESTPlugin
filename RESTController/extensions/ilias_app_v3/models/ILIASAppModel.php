@@ -220,14 +220,17 @@ final class ILIASAppModel extends Libs\RESTModel {
         else
             $cats->initialize(ilCalendarCategories::MODE_PERSONAL_DESKTOP_ITEMS);
 
-        $schedule = new ilCalendarSchedule(new ilDate(time(), IL_CAL_UNIX), ilCalendarSchedule::TYPE_INBOX);
+        $schedule = new ilCalendarSchedule(new ilDate(time(), IL_CAL_UNIX), ilCalendarSchedule::TYPE_HALF_YEAR, $user_id);
         $schedule->setEventsLimit(1000);
         $schedule->addSubitemCalendars(true);
         $schedule->calculate();
         $events = $schedule->getScheduledEvents();
         
         $result = array();
+      
         foreach ($events as $event) {
+            ilLoggerFactory::getInstance()->getLogger("EVENTS")->debug($event['event']->getTitle());
+
             $entry = $event['event'];
 
             $catInfo = $cats->getCategoryInfo($event['category_id']);
