@@ -54,7 +54,8 @@ $app->group('/v3/ilias-app', function () use ($app) {
         $iliasApp = new ILIASAppModel();
         $accessToken = $app->request->getToken();
         $authorizedUserId = $accessToken->getUserId();
-        $app->response()->body(json_encode($iliasApp->getEvents($authorizedUserId)));
+        $app->response()->body(json_encode($iliasApp->getEvents($authorizedUserId))
+    );
 
     $app->get('/object/:refId', RESTAuth::checkAccess(RESTAuth::TOKEN), function($refId) use ($app) {
         $iliasApp = new ILIASAppModel();
